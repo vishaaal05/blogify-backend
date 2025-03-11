@@ -12,9 +12,9 @@ const getPosts = async (req, res) => {
 const createPost = async (req, res) => {
     try {
         const { title, content, authorId } = req.body;
-        const userId = req.user.id; // This comes from authMiddleware
+        // const userId = req.user.id; // This comes from authMiddleware
 
-        if (!title || !content) {
+        if (!title || !content || !authorId) {
             return res.status(400).json({ message: "Title and content are required" });
         }
 
