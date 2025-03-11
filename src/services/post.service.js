@@ -7,9 +7,20 @@ const getAllPosts = async () => {
 };
 
 const createPost = async (title, content, authorId) => {
-  return await prisma.post.create({
-    data: { title, content, authorId },
-  });
-};
+    if (!title || !content || !authorId) {
+      throw new Error('Missing required fields');
+    }
+    
+    return await prisma.post.create({
+      data: { 
+        title, 
+        content, 
+        authorId 
+      },
+      include: {
+        author: true // Include author details in response
+      }
+    });
+  };
 
 module.exports = { getAllPosts, createPost };

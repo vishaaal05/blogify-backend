@@ -10,13 +10,27 @@ const getPosts = async (req, res) => {
 };
 
 const createPost = async (req, res) => {
-  try {
-    const { title, content, authorId } = req.body;
-    const post = await postService.createPost(title, content, authorId);
-    res.status(201).json(post);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
+    try {
+        const { title, content, authorId } = req.body;
+        const userId = req.user.id; // This comes from authMiddleware
+
+        if (!title || !content) {
+            return res.status(400).json({ message: "Title and content are required" });
+        }
+
+        const post = await postService.createPost(title, content, authorId);
+
+        res.status(201).json({ 
+            success: true,
+            post 
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ 
+            success: false,
+            message: "Error creating post" 
+        });
+    }
 };
 
 module.exports = { getPosts, createPost };
