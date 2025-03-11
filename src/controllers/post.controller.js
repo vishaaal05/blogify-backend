@@ -28,7 +28,7 @@ const createPost = async (req, res) => {
         console.error(error);
         res.status(500).json({ 
             success: false,
-            message: "Error creating post" 
+            message: error.message 
         });
     }
 };
