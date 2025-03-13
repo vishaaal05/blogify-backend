@@ -19,13 +19,77 @@ model User {
   email    String @unique
   password String
   posts    Post[]
+  Comments Comment[]
+  Likes Like[]
 }
 
 model Post {
+  id          String    @id @default(uuid())
+  title       String
+  content     String
+  author      User      @relation(fields: [authorId], references: [id])
+  authorId    String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime?
+  views       Int       @default(0)   
+  status      String    @default("draft")
+  featuredImg String?   
+  readingTime Int?      
+
+    // Relations
+  categories PostCategory[]
+  likes       Like[]
+  comments    Comment[]
+  tags        PostTag[]
+}
+
+model Comment {
   id        String   @id @default(uuid())
-  title     String
   content   String
-  author    User     @relation(fields: [authorId], references: [id])
-  authorId  String
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  post      Post     @relation(fields: [postId], references: [id])
+  postId    String
   createdAt DateTime @default(now())
+}
+
+model Category {
+  id    String  @id @default(uuid())
+  name  String  @unique
+  posts PostCategory[]
+}
+
+model PostCategory {
+  post       Post      @relation(fields: [postId], references: [id])
+  postId     String
+  category   Category  @relation(fields: [categoryId], references: [id])
+  categoryId String
+
+  @@id([postId, categoryId])  // Composite primary key
+}
+
+model Tag {
+  id    String   @id @default(uuid())
+  name  String   @unique
+  posts PostTag[]
+}
+
+model PostTag {
+  post   Post @relation(fields: [postId], references: [id])
+  postId String
+  tag    Tag  @relation(fields: [tagId], references: [id])
+  tagId  String
+
+  @@id([postId, tagId])  // Composite key to prevent duplicate tags on a post
+}
+
+model Like {
+  id        String   @id @default(uuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  post      Post     @relation(fields: [postId], references: [id])
+  postId    String
+  createdAt DateTime @default(now())
+
+  @@unique([userId, postId])  // Prevent duplicate likes
 }
