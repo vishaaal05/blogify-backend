@@ -11,7 +11,7 @@ const getPosts = async (req, res) => {
 
 const createPost = async (req, res) => {
   try {
-    const { title, content, authorId, status, featuredImg, readingTime } = req.body;
+    const { title, content, authorId, status, featuredImg } = req.body;
 
     if (!title || !content || !authorId) {
       return res
@@ -24,8 +24,7 @@ const createPost = async (req, res) => {
       content, 
       authorId, 
       status, 
-      featuredImg, 
-      readingTime
+      featuredImg
     );
 
     res.status(201).json({
@@ -84,7 +83,7 @@ const deletePost = async (req, res) => {
 const updatePost = async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, content, status, featuredImg, readingTime } = req.body;
+    const { title, content, status, featuredImg } = req.body;
     const updatedAt = new Date();
 
     if (!id) {
@@ -107,8 +106,7 @@ const updatePost = async (req, res) => {
       content, 
       updatedAt,
       status,
-      featuredImg,
-      readingTime
+      featuredImg
     );
 
     return res.status(200).json({

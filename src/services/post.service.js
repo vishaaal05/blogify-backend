@@ -1,4 +1,5 @@
 const prisma = require("../config/db");
+const calculateReadingTime = require("../utils/readingTime");
 
 const getAllPosts = async () => {
   return await prisma.post.findMany({
@@ -6,10 +7,12 @@ const getAllPosts = async () => {
   });
 };
 
-const createPostService = async (title, content, authorId, status = 'draft', featuredImg = null, readingTime = null) => {
+const createPostService = async (title, content, authorId, status = 'draft', featuredImg = null) => {
   if (!title || !content || !authorId) {
     throw new Error("Missing required fields");
   }
+
+  const readingTime = calculateReadingTime(content);
 
   return await prisma.post.create({
     data: {
@@ -41,7 +44,7 @@ const deletePostService = async (postId) => {
   return { message: "Post delete successfully" };
 };
 
-const updatePostService = async (postId, title, content, updatedAt, status, featuredImg, readingTime) => {
+const updatePostService = async (postId, title, content, updatedAt, status, featuredImg) => {
   const post = await prisma.post.findUnique({
     where: { id: postId },
   });
@@ -49,6 +52,8 @@ const updatePostService = async (postId, title, content, updatedAt, status, feat
   if (!post) {
     throw new Error("Post Not Found");
   }
+
+  const readingTime = calculateReadingTime(content);
 
   return await prisma.post.update({
     where: {
@@ -60,7 +65,7 @@ const updatePostService = async (postId, title, content, updatedAt, status, feat
       updatedAt,
       status: status || post.status,
       featuredImg: featuredImg || post.featuredImg,
-      readingTime: readingTime || post.readingTime,
+      readingTime,
     },
   });
 };
