@@ -38,4 +38,26 @@ const deletePostService = async (postId) => {
   return { message: "Post delete successfully" };
 };
 
-module.exports = { getAllPosts, createPostService, deletePostService };
+const updatePostService = async (postId, title, content) => {
+  const post = await prisma.post.findUnique({
+    where: { id: postId },
+  });
+
+  if (!post) {
+    throw new Error("Post Not Found");
+  }
+
+  await prisma.post.update({
+    where: {
+      id: postId,
+    },
+    data: { title, content },
+  });
+};
+
+module.exports = {
+  getAllPosts,
+  createPostService,
+  deletePostService,
+  updatePostService,
+};

@@ -75,4 +75,30 @@ const deletePost = async (req, res) => {
   }
 };
 
-module.exports = { getPosts, createPost, deletePost };
+const updatePost = async (req, res) =>{
+  try {
+    const {id} = req.params;
+    const {title, content } = req.body;
+
+    if(!id){
+      return res.status(400).json({
+        success: false,
+        message: "Post ID is required" 
+      })
+    }
+
+    const response = await postService.updatePostService(id, title, content);
+
+    return res.status(200).json({
+      success:true,
+      message:"post updated successfully"
+    })
+  } catch (error) {
+    console.error("Error while updating post", error.message)
+    return res.status(500).json({
+      success:false,
+      message:error.message
+    })
+  }
+}
+module.exports = { getPosts, createPost, deletePost, updatePost };
