@@ -6,21 +6,36 @@ const getAllPosts = async () => {
   });
 };
 
-const createPost = async (title, content, authorId) => {
-    if (!title || !content || !authorId) {
-      throw new Error('Missing required fields');
-    }
-    
-    return await prisma.post.create({
-      data: { 
-        title, 
-        content, 
-        authorId 
-      },
-      include: {
-        author: true // Include author details in response
-      }
-    });
-  };
+const createPostService = async (title, content, authorId) => {
+  if (!title || !content || !authorId) {
+    throw new Error("Missing required fields");
+  }
 
-module.exports = { getAllPosts, createPost };
+  return await prisma.post.create({
+    data: {
+      title,
+      content,
+      authorId,
+    },
+    include: {
+      author: true, // Include author details in response
+    },
+  });
+};
+
+const deletePostService = async (postId) => {
+  const post = await prisma.post.findUnique({
+    where: { id: postId },
+  });
+  if (!post) {
+    throw new Error("Post not found");
+  }
+
+  await prisma.post.delete({
+    where: { id: postId },
+  });
+
+  return { message: "Post delete successfully" };
+};
+
+module.exports = { getAllPosts, createPostService, deletePostService };
