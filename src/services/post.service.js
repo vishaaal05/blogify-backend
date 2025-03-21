@@ -38,7 +38,7 @@ const deletePostService = async (postId) => {
   return { message: "Post delete successfully" };
 };
 
-const updatePostService = async (postId, title, content) => {
+const updatePostService = async (postId, title, content, updatedAt) => {
   const post = await prisma.post.findUnique({
     where: { id: postId },
   });
@@ -51,7 +51,7 @@ const updatePostService = async (postId, title, content) => {
     where: {
       id: postId,
     },
-    data: { title, content },
+    data: { title, content, updatedAt },
   });
 };
 

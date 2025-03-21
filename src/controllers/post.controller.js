@@ -79,7 +79,7 @@ const updatePost = async (req, res) => {
   try {
     const { id } = req.params;
     const { title, content } = req.body;
-
+    const { updatedAt } = new Date();
     if (!id) {
       return res.status(400).json({
         success: false,
@@ -94,11 +94,11 @@ const updatePost = async (req, res) => {
       });
     }
 
-    const response = await postService.updatePostService(id, title, content);
+    const response = await postService.updatePostService(id, title, content, updatedAt);
 
     return res.status(200).json({
       success: true,
-      ...response,
+      message: "Post updated successfully"
     });
   } catch (error) {
     console.error("Error while updating post", error.message);
