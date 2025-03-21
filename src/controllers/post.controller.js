@@ -98,7 +98,7 @@ const updatePost = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      message: "post updated successfully",
+      ...response,
     });
   } catch (error) {
     console.error("Error while updating post", error.message);
