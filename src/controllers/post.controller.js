@@ -11,8 +11,7 @@ const getPosts = async (req, res) => {
 
 const createPost = async (req, res) => {
   try {
-    const { title, content, authorId } = req.body;
-    // const userId = req.user.id; // This comes from authMiddleware
+    const { title, content, authorId, status, featuredImg, readingTime } = req.body;
 
     if (!title || !content || !authorId) {
       return res
@@ -20,7 +19,14 @@ const createPost = async (req, res) => {
         .json({ message: "Title and content are required" });
     }
 
-    const post = await postService.createPostService(title, content, authorId);
+    const post = await postService.createPostService(
+      title, 
+      content, 
+      authorId, 
+      status, 
+      featuredImg, 
+      readingTime
+    );
 
     res.status(201).json({
       success: true,
@@ -78,8 +84,9 @@ const deletePost = async (req, res) => {
 const updatePost = async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, content } = req.body;
-    const { updatedAt } = new Date();
+    const { title, content, status, featuredImg, readingTime } = req.body;
+    const updatedAt = new Date();
+
     if (!id) {
       return res.status(400).json({
         success: false,
@@ -94,7 +101,15 @@ const updatePost = async (req, res) => {
       });
     }
 
-    const response = await postService.updatePostService(id, title, content, updatedAt);
+    const response = await postService.updatePostService(
+      id, 
+      title, 
+      content, 
+      updatedAt,
+      status,
+      featuredImg,
+      readingTime
+    );
 
     return res.status(200).json({
       success: true,
@@ -108,4 +123,27 @@ const updatePost = async (req, res) => {
     });
   }
 };
-module.exports = { getPosts, createPost, deletePost, updatePost };
+
+const getPostById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    // First get the post
+    const post = await postService.getPostByIdService(id);
+    
+    // Then increment the views
+    await postService.incrementViews(id);
+    
+    res.json({
+      success: true,
+      post
+    });
+  } catch (error) {
+    res.status(500).json({ 
+      success: false,
+      error: error.message 
+    });
+  }
+};
+
+module.exports = { getPosts, createPost, deletePost, updatePost, getPostById };

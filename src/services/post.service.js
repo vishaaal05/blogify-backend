@@ -6,7 +6,7 @@ const getAllPosts = async () => {
   });
 };
 
-const createPostService = async (title, content, authorId) => {
+const createPostService = async (title, content, authorId, status = 'draft', featuredImg = null, readingTime = null) => {
   if (!title || !content || !authorId) {
     throw new Error("Missing required fields");
   }
@@ -16,9 +16,12 @@ const createPostService = async (title, content, authorId) => {
       title,
       content,
       authorId,
+      status,
+      featuredImg,
+      readingTime,
     },
     include: {
-      author: true, // Include author details in response
+      author: true,
     },
   });
 };
@@ -38,7 +41,7 @@ const deletePostService = async (postId) => {
   return { message: "Post delete successfully" };
 };
 
-const updatePostService = async (postId, title, content, updatedAt) => {
+const updatePostService = async (postId, title, content, updatedAt, status, featuredImg, readingTime) => {
   const post = await prisma.post.findUnique({
     where: { id: postId },
   });
@@ -47,12 +50,57 @@ const updatePostService = async (postId, title, content, updatedAt) => {
     throw new Error("Post Not Found");
   }
 
-  await prisma.post.update({
+  return await prisma.post.update({
     where: {
       id: postId,
     },
-    data: { title, content, updatedAt },
+    data: { 
+      title, 
+      content, 
+      updatedAt,
+      status: status || post.status,
+      featuredImg: featuredImg || post.featuredImg,
+      readingTime: readingTime || post.readingTime,
+    },
   });
+};
+
+const incrementViews = async (postId) => {
+  return await prisma.post.update({
+    where: { id: postId },
+    data: {
+      views: {
+        increment: 1,
+      },
+    },
+  });
+};
+
+const getPostByIdService = async (postId) => {
+  const post = await prisma.post.findUnique({
+    where: { id: postId },
+    include: {
+      author: true,
+      comments: true,
+      likes: true,
+      categories: {
+        include: {
+          category: true
+        }
+      },
+      tags: {
+        include: {
+          tag: true
+        }
+      }
+    }
+  });
+
+  if (!post) {
+    throw new Error("Post not found");
+  }
+
+  return post;
 };
 
 module.exports = {
@@ -60,4 +108,6 @@ module.exports = {
   createPostService,
   deletePostService,
   updatePostService,
+  incrementViews,
+  getPostByIdService
 };
