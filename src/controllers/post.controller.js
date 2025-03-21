@@ -1,4 +1,5 @@
 const postService = require("../services/post.service");
+const { isValidStatus } = require("../constants/postStatus");
 
 const getPosts = async (req, res) => {
   try {
@@ -144,4 +145,44 @@ const getPostById = async (req, res) => {
   }
 };
 
-module.exports = { getPosts, createPost, deletePost, updatePost, getPostById };
+const updatePostStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    if (!id || !status) {
+      return res.status(400).json({
+        success: false,
+        message: "Post ID and status are required"
+      });
+    }
+
+    if (!isValidStatus(status)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid post status"
+      });
+    }
+
+    const post = await postService.updatePostStatus(id, status);
+    
+    res.json({
+      success: true,
+      post
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
+};
+
+module.exports = { 
+  getPosts, 
+  createPost, 
+  deletePost, 
+  updatePost, 
+  getPostById,
+  updatePostStatus 
+};

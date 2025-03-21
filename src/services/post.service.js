@@ -1,5 +1,6 @@
 const prisma = require("../config/db");
 const calculateReadingTime = require("../utils/readingTime");
+const { POST_STATUS, isValidStatus } = require("../constants/postStatus");
 
 const getAllPosts = async () => {
   return await prisma.post.findMany({
@@ -7,9 +8,13 @@ const getAllPosts = async () => {
   });
 };
 
-const createPostService = async (title, content, authorId, status = 'draft', featuredImg = null) => {
+const createPostService = async (title, content, authorId, status = POST_STATUS.DRAFT, featuredImg = null) => {
   if (!title || !content || !authorId) {
     throw new Error("Missing required fields");
+  }
+
+  if (status && !isValidStatus(status)) {
+    throw new Error("Invalid post status");
   }
 
   const readingTime = calculateReadingTime(content);
@@ -51,6 +56,10 @@ const updatePostService = async (postId, title, content, updatedAt, status, feat
 
   if (!post) {
     throw new Error("Post Not Found");
+  }
+
+  if (status && !isValidStatus(status)) {
+    throw new Error("Invalid post status");
   }
 
   const readingTime = calculateReadingTime(content);
@@ -108,11 +117,33 @@ const getPostByIdService = async (postId) => {
   return post;
 };
 
+// Add a new method to change post status
+const updatePostStatus = async (postId, status) => {
+  if (!isValidStatus(status)) {
+    throw new Error("Invalid post status");
+  }
+
+  const post = await prisma.post.findUnique({
+    where: { id: postId },
+  });
+
+  if (!post) {
+    throw new Error("Post not found");
+  }
+
+  return await prisma.post.update({
+    where: { id: postId },
+    data: { status }
+  });
+};
+
 module.exports = {
   getAllPosts,
   createPostService,
   deletePostService,
   updatePostService,
   incrementViews,
-  getPostByIdService
+  getPostByIdService,
+  updatePostStatus,
+  POST_STATUS
 };
