@@ -4,9 +4,13 @@ const { POST_STATUS, isValidStatus } = require("../constants/postStatus");
 
 const getAllPosts = async () => {
   return await prisma.post.findMany({
-    include: { author: true },
+    include: { 
+      author: true,
+      likes: true
+    }
   });
 };
+
 
 const createPostService = async (title, content, authorId, status = POST_STATUS.DRAFT, featuredImg = null) => {
   if (!title || !content || !authorId) {
