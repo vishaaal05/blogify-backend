@@ -11,6 +11,11 @@ const getAllPosts = async () => {
   });
 };
 
+const getAllPostsByAuthorId = async(authorId) => {
+  return await prisma.post.findMany({
+    where: { id: authorId },
+  })
+}
 
 const createPostService = async (title, content, authorId, status = POST_STATUS.DRAFT, featuredImg = null) => {
   if (!title || !content || !authorId) {
