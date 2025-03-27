@@ -6,7 +6,9 @@ const getAllPosts = async () => {
   return await prisma.post.findMany({
     include: { 
       author: true,
-      likes: true
+      likes: true,
+      comments:true,
+      
     }
   });
 };
