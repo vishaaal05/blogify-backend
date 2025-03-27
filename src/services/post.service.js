@@ -11,11 +11,16 @@ const getAllPosts = async () => {
   });
 };
 
-const getAllPostsByAuthorIdService = async(authorId) => {
+const getAllPostsByAuthorIdService = async (authorId) => {
   return await prisma.post.findMany({
-    where: { id: authorId },
-  })
-}
+    where: { authorId: authorId }, 
+    include: {
+      author: true, 
+      likes: true,  
+    },
+  });
+};
+
 
 const createPostService = async (title, content, authorId, status = POST_STATUS.DRAFT, featuredImg = null) => {
   if (!title || !content || !authorId) {
@@ -148,6 +153,7 @@ const updatePostStatus = async (postId, status) => {
 
 module.exports = {
   getAllPosts,
+  getAllPostsByAuthorIdService,
   createPostService,
   deletePostService,
   updatePostService,
