@@ -19,7 +19,7 @@ const getPostsByAuthorId = async (req, res) => {
       return res.status(400).json({ error: "Author ID is required" });
     }
 
-    const posts = await postService.getAllPostsByAuthorIdService();
+    const posts = await postService.getAllPostsByAuthorIdService(authorId); // Fix: Pass authorId
 
     return res.status(200).json({ success: true, data: posts });
   } catch (error) {
