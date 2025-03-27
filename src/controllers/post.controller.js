@@ -10,6 +10,26 @@ const getPosts = async (req, res) => {
   }
 };
 
+
+const getPostsByAuthorId = async (req, res) => {
+  try {
+    const { authorId } = req.params;
+
+    if (!authorId) {
+      return res.status(400).json({ error: "Author ID is required" });
+    }
+
+    const posts = await postService.getAllPostsByAuthorIdService();
+
+    return res.status(200).json({ success: true, data: posts });
+  } catch (error) {
+    console.error("Error fetching posts:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+
+
 const createPost = async (req, res) => {
   try {
     const { title, content, authorId, status, featuredImg } = req.body;
@@ -180,6 +200,7 @@ const updatePostStatus = async (req, res) => {
 
 module.exports = { 
   getPosts, 
+  getPostsByAuthorId,
   createPost, 
   deletePost, 
   updatePost, 
