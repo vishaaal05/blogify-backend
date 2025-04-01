@@ -1,21 +1,19 @@
 const jwt = require("jsonwebtoken");
 
 const authMiddleware = (req, res, next) => {
-  const authHeader = req.headers.authorization;
+  const token = req.cookies?.token; // Read token from cookies
 
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+  if (!token) {
     return res.status(401).json({ message: "No token provided" });
   }
 
   try {
-    // Extract token by removing 'Bearer ' prefix
-    const token = authHeader.split(" ")[1];
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.user = decoded;
     next();
   } catch (error) {
-    console.error("token verification error:", error);
-    res.status(401).json({ message: "invalid token" });
+    console.error("Token verification error:", error);
+    res.status(401).json({ message: "Invalid token" });
   }
 };
 
