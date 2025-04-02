@@ -51,11 +51,12 @@ const loginUser = async (req, res) => {
     // Set the token as an HTTP-only cookie
     res.cookie("token", token, {
       httpOnly: true,
-      secure: true, // Use secure cookies in production
+      secure: true, // Required for cross-site cookies
       sameSite: "None",
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
-
+    
+    console.log("Set-Cookie header sent:", res.getHeaders()["set-cookie"]); // Debugging
     res.status(200).json({ message: "Login successful" });
   } catch (error) {
     res.status(500).json({ error: error.message });
