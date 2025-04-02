@@ -10,7 +10,7 @@ const favoriteRoutes = require("./routes/favorite.routes");
 const app = express();
 app.use(express.json());
 app.use(cors({
-    origin: "http://localhost:5173", // Specify frontend URL
+    origin: "https://blogify-virid-theta.vercel.app/", // Specify frontend URL
     credentials: true, // Allow cookies (HTTP-only authentication)
   }));
 app.use(cookieParser());
