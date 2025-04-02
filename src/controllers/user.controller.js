@@ -55,8 +55,6 @@ const loginUser = async (req, res) => {
       sameSite: "None",
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
-    
-    console.log("Set-Cookie header sent:", res.getHeaders()["set-cookie"]); // Debugging
     res.status(200).json({ message: "Login successful" });
   } catch (error) {
     res.status(500).json({ error: error.message });
