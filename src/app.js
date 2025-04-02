@@ -9,7 +9,10 @@ const favoriteRoutes = require("./routes/favorite.routes");
 
 const app = express();
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+    origin: "http://localhost:5173", // Specify frontend URL
+    credentials: true, // Allow cookies (HTTP-only authentication)
+  }));
 app.use(cookieParser());
 
 app.use("/v1/api/posts", postRoutes);
