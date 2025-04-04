@@ -34,18 +34,26 @@ const toggleFavorite = async (userId, postId) => {
 };
 
 const getUserFavorites = async (userId) => {
-  return await prisma.favorite.findMany({
-    where: { userId },
-    include: {
-      post: {
-        include: {
-          author: true,
-          likes: true,
-          comments: true,
+  try {
+    // Ensure connection is established
+    await prisma.$connect();
+    
+    return await prisma.favorite.findMany({
+      where: { userId },
+      include: {
+        post: {
+          include: {
+            author: true,
+            likes: true,
+            comments: true,
+          },
         },
       },
-    },
-  });
+    });
+  } catch (error) {
+    console.error('Database error:', error);
+    throw new Error('Failed to fetch favorites. Please try again later.');
+  }
 };
 
 module.exports = {
