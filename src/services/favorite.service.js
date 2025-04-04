@@ -35,10 +35,12 @@ const toggleFavorite = async (userId, postId) => {
 
 const getUserFavorites = async (userId) => {
   try {
-    // Ensure connection is established
-    await prisma.$connect();
+    // Try to reconnect if disconnected
+    if (!prisma.$connect) {
+      await prisma.$connect();
+    }
     
-    return await prisma.favorite.findMany({
+    const favorites = await prisma.favorite.findMany({
       where: { userId },
       include: {
         post: {
@@ -50,9 +52,17 @@ const getUserFavorites = async (userId) => {
         },
       },
     });
+    
+    return favorites;
   } catch (error) {
     console.error('Database error:', error);
-    throw new Error('Failed to fetch favorites. Please try again later.');
+    if (error.code === 'P2021') {
+      throw new Error('Database table not found. Please check migrations.');
+    }
+    if (error.code === 'P2002') {
+      throw new Error('Database connection failed.');
+    }
+    throw error;
   }
 };
 
