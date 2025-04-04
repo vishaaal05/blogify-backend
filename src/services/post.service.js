@@ -8,6 +8,7 @@ const getAllPosts = async () => {
       author: true,
       likes: true,
       comments:true,
+      favourites:true
       
     }
   });
