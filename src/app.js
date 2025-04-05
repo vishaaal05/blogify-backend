@@ -11,7 +11,7 @@ const app = express();
 app.use(express.json());
 const allowedOrigins = [
   "http://localhost:5173",
-  "https://blogify-virid-theta.vercel.app"
+  "https://blogify-gules-omega.vercel.app"
 ];
 
 app.use(cors({
