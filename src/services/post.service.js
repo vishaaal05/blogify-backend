@@ -8,8 +8,8 @@ const getAllPosts = async () => {
       author: true,
       likes: true,
       comments:true,
-      favoritedBy:true
-      
+      favoritedBy:true,
+      categories: true
     }
   });
 };
