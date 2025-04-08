@@ -5,6 +5,7 @@ const userRoutes = require("./routes/user.routes");
 const commentRoutes = require("./routes/comment.routes");
 const likeRoutes = require("./routes/like.routes");
 const favoriteRoutes = require("./routes/favorite.routes");
+const categoryRoutes = require("./routes/category.routes");
 const prisma = require("./config/db");
 
 const app = express();
@@ -45,5 +46,6 @@ app.use("/v1/api/users", userRoutes);
 app.use("/v1/api/comments", commentRoutes);
 app.use("/v1/api/likes", likeRoutes);
 app.use("/v1/api/favorites", favoriteRoutes);
+app.use("/v1/api/categories", categoryRoutes);
 
 module.exports = app;
