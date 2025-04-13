@@ -6,10 +6,13 @@ const commentRoutes = require("./routes/comment.routes");
 const likeRoutes = require("./routes/like.routes");
 const favoriteRoutes = require("./routes/favorite.routes");
 const categoryRoutes = require("./routes/category.routes");
+const uploadRoutes = require("./routes/upload.routes");
 const prisma = require("./config/db");
 
 const app = express();
 app.use(express.json());
+app.use(express.urlencoded({ extended: true })); // Added this line
+
 const allowedOrigins = [
   "http://localhost:5173",
   "https://blogify-gules-omega.vercel.app"
@@ -47,5 +50,16 @@ app.use("/v1/api/comments", commentRoutes);
 app.use("/v1/api/likes", likeRoutes);
 app.use("/v1/api/favorites", favoriteRoutes);
 app.use("/v1/api/categories", categoryRoutes);
+app.use("/api/v1/upload", uploadRoutes);  
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({
+    success: false,
+    message: 'Something went wrong!',
+    error: process.env.NODE_ENV === 'development' ? err.message : undefined
+  });
+});
 
 module.exports = app;
